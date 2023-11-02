@@ -13,13 +13,13 @@ services:
       - 5432:5432
     volumes:
       - db:/var/lib/postgresql/data
-    pgadmin:
-        image: dpage/pgadmin4
-        container_name: pg-admin
-        environment:
-          PGADMIN_DEFAULT_EMAIL: soetan.dev@example.com
-          PGADMIN_DEFAULT_PASSWORD: 1993
-        ports:
-          - "5050:80"
+  pgadmin:
+      image: dpage/pgadmin4
+      container_name: pg-admin
+      environment:
+        PGADMIN_DEFAULT_EMAIL: soetan.dev@example.com
+        PGADMIN_DEFAULT_PASSWORD: 1993
+      ports:
+        - "5050:80"
 volumes:
   db:
