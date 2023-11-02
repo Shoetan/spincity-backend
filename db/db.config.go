@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"log"
 	"os"
+
+	"github.com/Shoetan/models"
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"github.com/joho/godotenv"
-
 )
 
 func getDbPassword (key string) string {
@@ -31,5 +32,8 @@ func InitializeDb() *gorm.DB{
 		fmt.Println("Connected to database")
 	}
 
+
+// create a table in the db with the struct of VinylRecord
+	db.AutoMigrate(&models.VinylRecord{})
 	return db
 }
