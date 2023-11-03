@@ -33,7 +33,7 @@ func InitializeDb() *gorm.DB{
 	}
 
 
-// create a table in the db with the struct of VinylRecord
-	db.AutoMigrate(&models.VinylRecord{})
+// create a table in the db with the struct in models
+	db.AutoMigrate(&models.VinylRecord{}, &models.User{})
 	return db
 }
