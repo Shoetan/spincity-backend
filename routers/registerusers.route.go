@@ -6,5 +6,5 @@ import (
 )
 
 func RegisterUser (router *gin.Engine) {
-	router.POST("/registerUser", handlers.RegisterUser)
+	router.POST("/apiV1/registerUser", handlers.RegisterUser)
 }
