@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/Shoetan/db"
@@ -8,7 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
-
 
 // Function to hash the password using bcrypt
 func hashPassword(password string) (string, error) {
@@ -23,11 +23,28 @@ func RegisterUser(ctx *gin.Context){
 	// initialize db 
 	db:=db.InitializeDb()
 
+	// Read the request body from user 
+	requestBody, err := ctx.GetRawData()
+	if err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{
+			"message":"Failed to register user",
+			"error": err.Error(),
+		})
+		return
+	}
+	//check the length of the request body is empty
+
+	if len(requestBody) == 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "Request body is empty",
+		})
+	}
+
 	var user models.User
 
-	if err := ctx.ShouldBind(&user); err != nil {
+	if err := json.Unmarshal(requestBody, &user); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
-			"message": "Failed to register user",
+			"message": "Invalid JSON format",
 			"error": err,
 		})
 
