@@ -25,6 +25,8 @@ func RegisterUser(ctx *gin.Context){
 
 	// Read the request body from user 
 	requestBody, err := ctx.GetRawData()
+
+
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{
 			"message":"Failed to register user",
@@ -40,6 +42,8 @@ func RegisterUser(ctx *gin.Context){
 		})
 	}
 
+
+	//make an instance of the user model 
 	var user models.User
 
 	if err := json.Unmarshal(requestBody, &user); err != nil {
