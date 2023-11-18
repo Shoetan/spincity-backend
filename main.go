@@ -15,6 +15,8 @@ func main() {
 
 	// initialize a gin engine
 	r:= gin.Default()
+	
 	routers.RegisterUser(r)
+	routers.CreateGenre(r)
 	r.Run("localhost:5555")
 }
