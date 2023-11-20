@@ -1,68 +1,70 @@
 package handlers
 
 import (
-	"encoding/json"
-	"net/http"
-	"github.com/Shoetan/db"
-	"github.com/Shoetan/models"
-	"github.com/gin-gonic/gin"
+  "encoding/json"
+  "net/http"
+  "github.com/Shoetan/db"
+  "github.com/Shoetan/models"
+  "github.com/gin-gonic/gin"
 )
 
-//Createa the  handler function for this 
+//Create the  handler function for this 
 
-func CreateGenre ( ctx *gin.Context) {
-	//initialize db 
+func CreateGenre(ctx *gin.Context) {
+  // Initialize DB
+  db := db.InitializeDb()
 
-	db :=db.InitializeDb()
+  // Get request body from the user
+  genreBody, err := ctx.GetRawData()
+	
+  if err != nil {
+    ctx.JSON(http.StatusBadGateway, gin.H{
+      "message": "Failed to create genre",
+      "error": err.Error(),
+    })
+    return
+  }
 
-	//get request body from the user
+  // Check the length of the request body is empty
+  if len(genreBody) == 0 {
+    ctx.JSON(http.StatusBadRequest, gin.H{
+      "message": "Request body is empty",
+    })
+    return
+  }
 
-	genreBody , err := ctx.GetRawData()
+  // Make an instance of the genre model
+  var genre models.Genre
 
-	if err != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H {
-			"message": "Failed to create genre",
-			"error": err.Error(),
-		})
-		return
-	}
+  // Unmarshall the request body
+  if err := json.Unmarshal(genreBody, &genre); err != nil {
+    ctx.JSON(http.StatusBadRequest, gin.H{
+      "message": "Invalid request body or JSON format",
+      "error": err,
+    })
+    return
+  }
 
-	//check the length of the request body is empty
+  // Check if a genre with the same title already exists
 
-	if len(genreBody) == 0 {
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"message": "Request body is empty",
-		})
-	}
+  if result := db.First(&genre, "title = ?", genre.Title); result.RowsAffected > 0 {
+    ctx.JSON(http.StatusConflict, gin.H{
+      "message": "Genre with the same title already exists",
+      "error": "Duplicate genre title",
+    })
+    return
+  }
 
-	//make an instance of the genre model 
-
-	var genre models.Genre
-
-
-	//unmarshall the request body
-
-	if err := json.Unmarshal(genreBody, &genre); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H {
-			"message": "Invalid request body or Json format",
-			"error": err,
-		})
-
-		return
-	}
-
-	if result := db.Create(&genre); result.Error != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H {
-			"message": "Failed to create Genre",
-			"error": result.Error.Error(),
-		} )
-	} else {
-		ctx.JSON(http.StatusCreated, gin.H{
-			"message": "Genre created",
-			"genre": genre,
-		})
-	}
-
+  // Create the genre if it doesn't exist
+  if result := db.Create(&genre); result.Error != nil {
+    ctx.JSON(http.StatusInternalServerError, gin.H{
+      "message": "Failed to create genre",
+      "error": result.Error.Error(),
+    })
+  } else {
+    ctx.JSON(http.StatusCreated, gin.H{
+      "message": "Genre created",
+      "genre": genre,
+    })
+  }
 }
-
-
