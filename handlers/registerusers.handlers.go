@@ -66,10 +66,16 @@ func RegisterUser(ctx *gin.Context){
 		return
 }
 
+//check db if user email exists
+if result := db.First(&user, "email = ?", user.Email); result.RowsAffected > 0 {
+	ctx.JSON(http.StatusConflict, gin.H {
+		"message": "This email address already exists",
+    "error": "Duplicate email address",
+	})
+}
+
 
 	user.Password = hashedPassword 
-
-	
 
 	//create a new user in the database using GORM
 
