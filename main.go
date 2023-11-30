@@ -18,5 +18,6 @@ func main() {
 	
 	routers.RegisterUser(r)
 	routers.CreateGenre(r)
+	routers.ReturnGenre(r)
 	r.Run("localhost:5555")
 }
