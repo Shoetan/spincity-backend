@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 
 	"github.com/Shoetan/db"
 	"github.com/Shoetan/routers"
@@ -10,7 +9,7 @@ import (
 
 
 func main() {
-	fmt.Println("Started all over again...")
+
 	db.InitializeDb()
 
 	// initialize a gin engine
@@ -18,5 +17,6 @@ func main() {
 	
 	routers.RegisterUser(r)
 	routers.CreateGenre(r)
+	routers.ReturnGenre(r)
 	r.Run("localhost:5555")
 }
