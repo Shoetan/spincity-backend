@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 
 	"github.com/Shoetan/db"
 	"github.com/Shoetan/routers"
@@ -10,7 +9,7 @@ import (
 
 
 func main() {
-	fmt.Println("Started all over again...")
+
 	db.InitializeDb()
 
 	// initialize a gin engine
