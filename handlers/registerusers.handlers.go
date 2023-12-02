@@ -58,6 +58,8 @@ func RegisterUser(ctx *gin.Context){
 	// hash the password 
 	hashedPassword, err:= hashPassword(user.Password)
 
+	hashedConfirmPassword, err:= hashPassword(user.ConfrimPassword)
+
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 				"message": "Failed to register user",
@@ -76,6 +78,7 @@ if result := db.First(&user, "email = ?", user.Email); result.RowsAffected > 0 {
 
 
 	user.Password = hashedPassword 
+	user.ConfrimPassword = hashedConfirmPassword
 
 	//create a new user in the database using GORM
 
