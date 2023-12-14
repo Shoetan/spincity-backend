@@ -1,8 +1,8 @@
 package routers
 
 import (
-	"github.com/Shoetan/handlers"
 	"github.com/gin-gonic/gin"
+	"github.com/Shoetan/handlers"
 )
 
 func CreateGenre ( router *gin.Engine) {
