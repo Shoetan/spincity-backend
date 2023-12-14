@@ -13,3 +13,4 @@ type User struct {
 	Password string `json:"password"`
 	ConfrimPassword string `json:"confrim_password"`
 }
+

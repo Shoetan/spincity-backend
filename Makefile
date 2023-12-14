@@ -3,3 +3,6 @@ run :
 
 tidy :
 	go run mod tidy
+
+dev :
+	air

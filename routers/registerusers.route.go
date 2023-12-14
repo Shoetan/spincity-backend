@@ -10,7 +10,7 @@ func RegisterUser (router *gin.Engine) {
 
 	// Add cors middleware
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:[]string{ "http://localhost:3000"     },
+		AllowOrigins:[]string{ "http://localhost:9999"     },
 		AllowMethods: []string{"GET"},
     AllowHeaders: []string{"Content-Type, Authorization"},
 	}))

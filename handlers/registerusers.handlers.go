@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-
 	"github.com/Shoetan/db"
 	"github.com/Shoetan/models"
 	"github.com/gin-gonic/gin"
@@ -46,6 +45,15 @@ func RegisterUser(ctx *gin.Context){
 	//make an instance of the user model 
 	var user models.User
 
+	type ResponseUser struct {
+		ID string `json:"id"`
+		Name string  `json:"name"`
+		Email string `json:"email"`
+		CreatedAt string `json:"created_at"`
+		UpdatedAt string `json:"updated_at"`
+		DeleteAt string `json:"delete_at"`
+	}
+
 	if err := json.Unmarshal(requestBody, &user); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"message": "Invalid JSON format",
@@ -76,7 +84,7 @@ if result := db.First(&user, "email = ?", user.Email); result.RowsAffected > 0 {
 	})
 }
 
-
+	//updating user object wwith hashed password 
 	user.Password = hashedPassword 
 	user.ConfrimPassword = hashedConfirmPassword
 
@@ -90,11 +98,16 @@ if result := db.First(&user, "email = ?", user.Email); result.RowsAffected > 0 {
 		return
 	}
 
+	responseUser := ResponseUser{
+		Email:user.Email,
+		Name: user.Name,	
+	}
+
 	//User registration successful
 
 	ctx.JSON(http.StatusCreated, gin.H{
 		"message": "Registration successful",
-		"user": user,
+		"user": responseUser,
 	})
 }
 

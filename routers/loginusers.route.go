@@ -6,12 +6,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func ReturnGenre (router *gin.Engine) {
+func LoginUser (router *gin.Engine) {
+
 	// Add cors middleware
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:[]string{ "http://localhost:9999"     },
-		AllowMethods: []string{"GET"},
+		AllowMethods: []string{"POST"},
     AllowHeaders: []string{"Content-Type, Authorization"},
 	}))
-	router.GET("/apiV1/returngenre", handlers.ReturnGenreFromDb)
+	router.POST("/apiV1/loginUser", handlers.LoginUser)
 }
