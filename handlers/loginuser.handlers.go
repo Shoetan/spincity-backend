@@ -3,19 +3,15 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-
 	"github.com/Shoetan/db"
 	"github.com/Shoetan/models"
 	"github.com/Shoetan/types"
 	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
+	"github.com/Shoetan/utils"
+	
 )
 
-// Function to  compare hashed passwords against its plain text equivalent
 
-func comparePassword(hashedPassword, plainPassword string) (error){
-	return  bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(plainPassword))
-}
 
 func LoginUser(ctx *gin.Context) {
 
@@ -28,7 +24,7 @@ func LoginUser(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(http.StatusForbidden, gin.H{
 			"message":"Invalid request body",
-			"status":"fail",
+			"status":err,
 		})
 	}
 
@@ -51,14 +47,30 @@ func LoginUser(ctx *gin.Context) {
 
 	
 
-	err = comparePassword(user.Password, payload.Password); 
+	compareResult := utils.ComparePassword(user.Password, payload.Password); 
 
-	if err !=nil {
+	if compareResult != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H {
 			"message":"Invalid password",
-			"status":"failure",
+			"status": compareResult.Error(),
 		})
-	}
+	} else {
+		
+		token,tokenErr:= utils.CreateToken(payload.Email)
+	
+		if tokenErr != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H {
+				"message":"Invalid token",
+				"token":token,
+				"err":tokenErr.Error(),
+			})
+		}else{
+			ctx.JSON(http.StatusOK, gin.H {
+				"message":"Login successful",
+				"token": token,
+			})
 
+		}	
+	}	
 
 }
