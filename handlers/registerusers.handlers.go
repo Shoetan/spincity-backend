@@ -3,20 +3,15 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+
 	"github.com/Shoetan/db"
 	"github.com/Shoetan/models"
+	"github.com/Shoetan/utils"
 	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
+	"strconv"
+	"github.com/Shoetan/types"
 )
 
-// Function to hash the password using bcrypt
-func hashPassword(password string) (string, error) {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-			return "", err
-	}
-	return string(hashedPassword), nil
-}
 
 func RegisterUser(ctx *gin.Context){
 	// initialize db 
@@ -45,15 +40,6 @@ func RegisterUser(ctx *gin.Context){
 	//make an instance of the user model 
 	var user models.User
 
-	type ResponseUser struct {
-		ID string `json:"id"`
-		Name string  `json:"name"`
-		Email string `json:"email"`
-		CreatedAt string `json:"created_at"`
-		UpdatedAt string `json:"updated_at"`
-		DeleteAt string `json:"delete_at"`
-	}
-
 	if err := json.Unmarshal(requestBody, &user); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"message": "Invalid JSON format",
@@ -64,9 +50,9 @@ func RegisterUser(ctx *gin.Context){
 	}
 
 	// hash the password 
-	hashedPassword, err:= hashPassword(user.Password)
+	hashedPassword, err:= utils.HashPassword(user.Password)
 
-	hashedConfirmPassword, err:= hashPassword(user.ConfrimPassword)
+	hashedConfirmPassword, err:= utils.HashPassword(user.ConfrimPassword)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -98,9 +84,12 @@ if result := db.First(&user, "email = ?", user.Email); result.RowsAffected > 0 {
 		return
 	}
 
-	responseUser := ResponseUser{
+	responseUser := types.ResponseUser{
 		Email:user.Email,
-		Name: user.Name,	
+		Name: user.Name,
+		CreatedAt: user.CreatedAt.Format("2006-01-02T15:04:05 -070000"),
+		UpdatedAt: user.UpdatedAt.Format("2006-01-02T15:04:05 -070000"),
+		ID: strconv.FormatUint(uint64(user.ID), 10),
 	}
 
 	//User registration successful
