@@ -18,9 +18,11 @@ func getSecretKey(key string) string {
 	return os.Getenv(key)
 }
 
+var secretKey = []byte(getSecretKey("SECRET_KEY"))
+
 func CreateToken(email string) (string, error) {
-	secretKey:= []byte(getSecretKey("SECRET_KEY"))
-	fmt.Println(secretKey)
+	
+	
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, 
 		jwt.MapClaims{ 
 		"userEmail": email, 
@@ -33,4 +35,20 @@ func CreateToken(email string) (string, error) {
 	}
 
 return tokenString, nil
+}
+
+func verifyToken(tokenString string) error {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return secretKey, nil
+	})
+
+	if err != nil {
+		return err
+	}
+
+	if !token.Valid {
+		return fmt.Errorf("invalid token")
+	}
+
+	return nil
 }
